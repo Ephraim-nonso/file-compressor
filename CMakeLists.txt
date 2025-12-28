@@ -10,6 +10,8 @@ add_library(compression
     src/Client.cpp
     src/IdentityCompression.cpp
     src/AdaptiveCompression.cpp
+    src/HttpServer.cpp
+    src/CompressionApi.cpp
 )
 target_include_directories(compression PUBLIC include) # Changed from src to include
 target_link_libraries(compression PUBLIC pthread)
@@ -21,6 +23,10 @@ target_include_directories(server PRIVATE include) # Add include directory for s
 add_executable(client src/ClientMain.cpp)
 target_link_libraries(client PRIVATE compression pthread)
 target_include_directories(client PRIVATE include) # Add include directory for client
+
+add_executable(http_server src/HttpServerMain.cpp)
+target_link_libraries(http_server PRIVATE compression pthread)
+target_include_directories(http_server PRIVATE include)
 
 include(FetchContent)
 FetchContent_Declare(
