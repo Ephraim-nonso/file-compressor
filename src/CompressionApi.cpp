@@ -12,7 +12,8 @@ HttpResponse textError(int code, const std::string& msg) {
     // Allow browser-based frontends (different origin) to call this API.
     res.headers["Access-Control-Allow-Origin"] = "*";
     res.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS";
-    res.headers["Access-Control-Allow-Headers"] = "Content-Type";
+    // Browser preflight includes both Content-Type and Accept for our frontend fetch().
+    res.headers["Access-Control-Allow-Headers"] = "Content-Type, Accept";
     res.body.assign(msg.begin(), msg.end());
     return res;
 }
@@ -26,7 +27,7 @@ HttpResponse CompressionApi::handle(const HttpRequest& req) const {
         res.statusText = "No Content";
         res.headers["Access-Control-Allow-Origin"] = "*";
         res.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS";
-        res.headers["Access-Control-Allow-Headers"] = "Content-Type";
+        res.headers["Access-Control-Allow-Headers"] = "Content-Type, Accept";
         return res;
     }
 
@@ -38,7 +39,7 @@ HttpResponse CompressionApi::handle(const HttpRequest& req) const {
         res.headers["Content-Type"] = "text/plain; charset=utf-8";
         res.headers["Access-Control-Allow-Origin"] = "*";
         res.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS, GET";
-        res.headers["Access-Control-Allow-Headers"] = "Content-Type";
+        res.headers["Access-Control-Allow-Headers"] = "Content-Type, Accept";
         const std::string body = "ok\n";
         res.body.assign(body.begin(), body.end());
         return res;
@@ -54,7 +55,7 @@ HttpResponse CompressionApi::handle(const HttpRequest& req) const {
             res.headers["Content-Type"] = "application/octet-stream";
             res.headers["Access-Control-Allow-Origin"] = "*";
             res.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS";
-            res.headers["Access-Control-Allow-Headers"] = "Content-Type";
+            res.headers["Access-Control-Allow-Headers"] = "Content-Type, Accept";
             res.body = algo.compress(req.body);
             return res;
         }
@@ -63,7 +64,7 @@ HttpResponse CompressionApi::handle(const HttpRequest& req) const {
             res.headers["Content-Type"] = "application/octet-stream";
             res.headers["Access-Control-Allow-Origin"] = "*";
             res.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS";
-            res.headers["Access-Control-Allow-Headers"] = "Content-Type";
+            res.headers["Access-Control-Allow-Headers"] = "Content-Type, Accept";
             res.body = algo.decompress(req.body);
             return res;
         }

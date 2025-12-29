@@ -24,7 +24,8 @@ RUN cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release \
 # For the HTTP API server (optional at runtime; compose maps this).
 EXPOSE 8081
 
-# Default: run the full test suite
-CMD ["ctest", "--test-dir", "build", "--output-on-failure"]
+# Default: run the HTTP API server (Railway-friendly; uses $PORT if set).
+# Note: the docker-compose `tests` service overrides this CMD to run ctest.
+CMD ["./build/http_server"]
 
 

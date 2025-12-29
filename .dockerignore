@@ -1,3 +1,20 @@
+# Keep Docker builds fast (especially on Railway).
+**/.git
+**/.DS_Store
+
+# CMake / build outputs
+build
+**/build
+
+# Frontend artifacts (not needed to build/run the C++ API image)
+frontend/node_modules
+frontend/dist
+frontend/.waku
+frontend/.vite
+
+# Node deps anywhere
+**/node_modules
+
 build
 .git
 .DS_Store

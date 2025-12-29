@@ -6,7 +6,17 @@ function getApiBase(): string {
   const envBase = (import.meta as any)?.env?.WAKU_PUBLIC_API_BASE as
     | string
     | undefined;
-  return envBase && envBase.trim().length > 0 ? envBase : DEFAULT_BASE;
+  const raw = envBase?.trim();
+  if (!raw) return DEFAULT_BASE;
+
+  // Normalize:
+  // - allow users to paste just the host (e.g. "my-api.up.railway.app")
+  // - strip trailing slashes so `${base}${path}` doesn't become `//compress`
+  let base = raw.replace(/\/+$/, "");
+  if (!/^https?:\/\//i.test(base) && !base.startsWith("/")) {
+    base = `https://${base}`;
+  }
+  return base;
 }
 
 async function postBinary(
@@ -29,12 +39,7 @@ async function postBinary(
     });
   } catch (e) {
     // Browser fetch throws TypeError on network failures (CORS blocked, connection refused, etc).
-    const extra =
-      `Failed to fetch from ${url}.\n` +
-      `Make sure your C++ HTTP server is running and reachable.\n` +
-      `- Local: run ./build/http_server 8081\n` +
-      `- Docker: docker compose up --build api\n` +
-      `If your frontend runs in Docker too, set WAKU_PUBLIC_API_BASE to the container DNS name (e.g. http://api:8081).`;
+    const extra = `Failed to fetch.`;
     throw new Error(extra);
   }
 

@@ -2,6 +2,7 @@
 #include "CompressionApi.h"
 
 #include <atomic>
+#include <cstdlib>
 #include <csignal>
 #include <chrono>
 #include <iostream>
@@ -24,6 +25,16 @@ int main(int argc, char** argv) {
         } catch (...) {
             std::cerr << "Usage: http_server [port]\n";
             return 2;
+        }
+    } else {
+        // Railway (and many other PaaS) provides the listen port via PORT.
+        if (const char* envPort = std::getenv("PORT")) {
+            try {
+                port = std::stoi(envPort);
+            } catch (...) {
+                std::cerr << "Invalid PORT env var: '" << envPort << "'. Expected integer.\n";
+                return 2;
+            }
         }
     }
 
