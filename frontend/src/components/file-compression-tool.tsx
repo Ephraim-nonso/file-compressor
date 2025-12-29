@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { adaptiveCompress, adaptiveDecompress } from "../lib/adaptive";
+import { apiCompress, apiDecompress } from "../lib/api";
 import { formatBytes, toHexPreview } from "../lib/format";
 
 type Mode = "compress" | "decompress";
@@ -59,8 +59,8 @@ export function FileCompressionTool() {
     try {
       const out =
         mode === "compress"
-          ? adaptiveCompress(inputBytes)
-          : adaptiveDecompress(inputBytes);
+          ? await apiCompress(inputBytes)
+          : await apiDecompress(inputBytes);
       setOutputBytes(out);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Unexpected error");
@@ -91,7 +91,7 @@ export function FileCompressionTool() {
           <button
             type="button"
             className={[
-              "px-3 py-2 text-sm",
+              "cursor-pointer px-3 py-2 text-sm",
               mode === "compress"
                 ? "bg-zinc-900 text-white"
                 : "bg-white text-zinc-800",
@@ -107,7 +107,7 @@ export function FileCompressionTool() {
           <button
             type="button"
             className={[
-              "px-3 py-2 text-sm",
+              "cursor-pointer px-3 py-2 text-sm",
               mode === "decompress"
                 ? "bg-zinc-900 text-white"
                 : "bg-white text-zinc-800",
@@ -150,7 +150,7 @@ export function FileCompressionTool() {
             type="button"
             onClick={() => void run()}
             disabled={busy || !inputBytes}
-            className="rounded-xl bg-zinc-900 px-4 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50"
+            className="cursor-pointer rounded-xl bg-zinc-900 px-4 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50"
           >
             {busy
               ? "Working…"
@@ -163,7 +163,7 @@ export function FileCompressionTool() {
             <button
               type="button"
               onClick={() => downloadBytes(outputBytes, suggestedName)}
-              className="rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-900 hover:bg-zinc-50"
+              className="cursor-pointer rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-900 hover:bg-zinc-50"
             >
               Download result
             </button>
@@ -191,11 +191,11 @@ export function FileCompressionTool() {
         )}
 
         {outputBytes && (
-          <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-4">
+          <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-4 overflow-hidden">
             <div className="text-sm font-medium text-zinc-900">
               Preview (hex)
             </div>
-            <pre className="mt-2 overflow-auto rounded-lg bg-white p-3 text-xs text-zinc-800">
+            <pre className="mt-2 max-w-full overflow-x-auto rounded-lg bg-white p-3 text-xs text-zinc-800 whitespace-pre-wrap break-all">
               {toHexPreview(outputBytes)}
             </pre>
           </div>

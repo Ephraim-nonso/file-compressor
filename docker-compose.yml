@@ -3,3 +3,18 @@ services:
     build: .
     command: ["ctest", "--test-dir", "build", "--output-on-failure"]
 
+  api:
+    build: .
+    command: ["./build/http_server", "8081"]
+    ports:
+      - "8081:8081"
+
+  web:
+    build:
+      context: ./frontend
+    environment:
+      - WAKU_PUBLIC_API_BASE=http://api:8081
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api

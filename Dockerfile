@@ -21,6 +21,9 @@ COPY . .
 RUN cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release \
  && cmake --build build -j
 
+# For the HTTP API server (optional at runtime; compose maps this).
+EXPOSE 8081
+
 # Default: run the full test suite
 CMD ["ctest", "--test-dir", "build", "--output-on-failure"]
 
