@@ -2,12 +2,15 @@
 
 #include <algorithm>
 #include <cerrno>
+#include <cctype>
 #include <cstring>
 #include <stdexcept>
 
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <unistd.h>
+
+#include "platform/socket_init.h"
 
 namespace {
 std::string toLower(std::string s) {
@@ -116,6 +119,8 @@ void HttpServer::setHandler(Handler h) {
 
 void HttpServer::start() {
     if (running) return;
+
+    ensure_socket_init();
 
     serverSocket = ::socket(AF_INET, SOCK_STREAM, 0);
     if (serverSocket < 0) {

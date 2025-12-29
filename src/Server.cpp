@@ -7,6 +7,8 @@
 #include <cerrno>
 #include <stdexcept>
 
+#include "platform/socket_init.h"
+
 namespace {
 void defaultEchoHandler(int clientSock) {
     char buffer[4096];
@@ -57,6 +59,8 @@ void Server::start() {
     if (running) {
         return;
     }
+
+    ensure_socket_init();
 
     serverSocket = ::socket(AF_INET, SOCK_STREAM, 0);
     if (serverSocket < 0) {

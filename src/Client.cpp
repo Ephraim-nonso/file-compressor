@@ -6,6 +6,8 @@
 #include <cstring>
 #include <cerrno>
 
+#include "platform/socket_init.h"
+
 /**
  * Client constructor - Initialize member variables
  * This is already implemented for you.
@@ -44,6 +46,8 @@ bool Client::connect() {
     if (connected) {
         return true;
     }
+
+    ensure_socket_init();
 
     clientSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (clientSocket < 0) {

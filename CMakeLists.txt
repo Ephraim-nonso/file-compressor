@@ -3,6 +3,8 @@ project(File-Compression-System)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+find_package(Threads REQUIRED)
+
 add_library(compression
     src/RLECompression.cpp
     src/FileHandler.cpp
@@ -14,18 +16,25 @@ add_library(compression
     src/CompressionApi.cpp
 )
 target_include_directories(compression PUBLIC include) # Changed from src to include
-target_link_libraries(compression PUBLIC pthread)
+
+target_link_libraries(compression PUBLIC Threads::Threads)
+
+if (WIN32)
+    target_link_libraries(compression PUBLIC ws2_32)
+    # Ensure inet_pton and modern Winsock APIs are available.
+    target_compile_definitions(compression PUBLIC _WIN32_WINNT=0x0600)
+endif()
 
 add_executable(server src/ServerMain.cpp)
-target_link_libraries(server PRIVATE compression pthread)
+target_link_libraries(server PRIVATE compression)
 target_include_directories(server PRIVATE include) # Add include directory for server
 
 add_executable(client src/ClientMain.cpp)
-target_link_libraries(client PRIVATE compression pthread)
+target_link_libraries(client PRIVATE compression)
 target_include_directories(client PRIVATE include) # Add include directory for client
 
 add_executable(http_server src/HttpServerMain.cpp)
-target_link_libraries(http_server PRIVATE compression pthread)
+target_link_libraries(http_server PRIVATE compression)
 target_include_directories(http_server PRIVATE include)
 
 include(FetchContent)
