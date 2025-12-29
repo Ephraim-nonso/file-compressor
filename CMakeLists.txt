@@ -22,7 +22,7 @@ target_link_libraries(compression PUBLIC Threads::Threads)
 if (WIN32)
     target_link_libraries(compression PUBLIC ws2_32)
     # Ensure inet_pton and modern Winsock APIs are available.
-    target_compile_definitions(compression PUBLIC _WIN32_WINNT=0x0600)
+    target_compile_definitions(compression PUBLIC _WIN32_WINNT=0x0600 NOMINMAX)
 endif()
 
 add_executable(server src/ServerMain.cpp)

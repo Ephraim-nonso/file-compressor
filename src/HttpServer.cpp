@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cerrno>
 #include <cctype>
+#include <climits>
 #include <cstring>
 #include <stdexcept>
 
@@ -98,7 +99,9 @@ size_t parseContentLength(const HttpRequest& req) {
 void sendAll(int sock, const char* data, size_t len) {
     size_t off = 0;
     while (off < len) {
-        ssize_t n = ::send(sock, data + off, len - off, 0);
+        const size_t chunk = std::min(len - off, static_cast<size_t>(INT_MAX));
+        const int chunkInt = static_cast<int>(chunk);
+        ssize_t n = ::send(sock, data + off, chunkInt, 0);
         if (n < 0 && errno == EINTR) continue;
         if (n <= 0) throw std::runtime_error("send() failed");
         off += static_cast<size_t>(n);
@@ -128,7 +131,14 @@ void HttpServer::start() {
     }
 
     int opt = 1;
-    (void)::setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+#ifdef _WIN32
+    const char* optPtr = reinterpret_cast<const char*>(&opt);
+    const int optLen = static_cast<int>(sizeof(opt));
+#else
+    const void* optPtr = &opt;
+    const socklen_t optLen = static_cast<socklen_t>(sizeof(opt));
+#endif
+    (void)::setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, optPtr, optLen);
 
     sockaddr_in addr{};
     addr.sin_family = AF_INET;
@@ -196,7 +206,8 @@ void HttpServer::handleClient(int clientSock) {
         while (req.body.size() < contentLength) {
             char buf[4096];
             size_t want = std::min(sizeof(buf), contentLength - req.body.size());
-            ssize_t n = ::recv(clientSock, buf, want, 0);
+            const int wantInt = static_cast<int>(std::min<size_t>(want, static_cast<size_t>(INT_MAX)));
+            ssize_t n = ::recv(clientSock, buf, wantInt, 0);
             if (n == 0) break;
             if (n < 0) {
                 if (errno == EINTR) continue;

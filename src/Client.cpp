@@ -2,9 +2,11 @@
 #include <iostream>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <sys/socket.h>
 #include <unistd.h>
 #include <cstring>
 #include <cerrno>
+#include <climits>
 
 #include "platform/socket_init.h"
 
@@ -172,7 +174,9 @@ std::vector<char> Client::receiveData(size_t maxSize) {
     while (out.size() < maxSize) {
         char buf[4096];
         size_t want = std::min(sizeof(buf), maxSize - out.size());
-        ssize_t n = ::recv(clientSocket, buf, want, 0);
+        // Winsock recv() takes an int length; POSIX takes size_t. Cast safely.
+        const int wantInt = static_cast<int>(std::min<size_t>(want, static_cast<size_t>(INT_MAX)));
+        ssize_t n = ::recv(clientSocket, buf, wantInt, 0);
         if (n > 0) {
             out.insert(out.end(), buf, buf + n);
             continue;

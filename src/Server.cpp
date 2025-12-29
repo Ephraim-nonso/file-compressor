@@ -68,7 +68,14 @@ void Server::start() {
     }
 
     int opt = 1;
-    if (::setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) {
+#ifdef _WIN32
+    const char* optPtr = reinterpret_cast<const char*>(&opt);
+    const int optLen = static_cast<int>(sizeof(opt));
+#else
+    const void* optPtr = &opt;
+    const socklen_t optLen = static_cast<socklen_t>(sizeof(opt));
+#endif
+    if (::setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, optPtr, optLen) < 0) {
         ::close(serverSocket);
         serverSocket = -1;
         throw std::runtime_error(std::string("Server::start: setsockopt(SO_REUSEADDR) failed: ") + std::strerror(errno));
