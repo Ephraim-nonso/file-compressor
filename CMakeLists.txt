@@ -58,7 +58,7 @@ foreach(TEST_SOURCE_FILE ${TEST_SOURCES})
     add_executable(${TEST_NAME} ${TEST_SOURCE_FILE})
 
     # Link necessary libraries to the individual test executable
-    target_link_libraries(${TEST_NAME} PRIVATE compression Catch2::Catch2WithMain pthread)
+    target_link_libraries(${TEST_NAME} PRIVATE compression Catch2::Catch2WithMain Threads::Threads)
     target_include_directories(${TEST_NAME} PRIVATE include) # Add include
 
     # Add a CTest test for each executable

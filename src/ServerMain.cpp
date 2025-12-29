@@ -1,6 +1,7 @@
 #include "Server.h"
 #include "RLECompression.h"
 #include <iostream>
+#include <string>
 #include <unistd.h>
 #include <vector>
 #include <sys/socket.h>
