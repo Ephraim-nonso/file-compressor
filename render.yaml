@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: file-compression-api
+    env: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        sync: false  # Render sets this automatically
+    # Free tier: spins down after 15 min inactivity
+    # Paid tier: always-on available
+
