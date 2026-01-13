@@ -7,15 +7,14 @@ export function formatBytes(n: number): string {
   return `${mb.toFixed(2)} MB`;
 }
 
-export function toHexPreview(bytes: Uint8Array, max: number = 96): string {
-  const len = Math.min(bytes.length, max);
+export function toHexPreview(bytes: Uint8Array): string {
   const parts: string[] = [];
-  for (let i = 0; i < len; i++) {
+  for (let i = 0; i < bytes.length; i++) {
     parts.push(bytes[i]!.toString(16).padStart(2, '0'));
   }
-  const suffix = bytes.length > max ? ` … (+${bytes.length - max} bytes)` : '';
-  return parts.join(' ') + suffix;
+  return parts.join(' ');
 }
+
 
 
 

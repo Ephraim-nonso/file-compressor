@@ -191,11 +191,11 @@ export function FileCompressionTool() {
         )}
 
         {outputBytes && (
-          <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-4 overflow-hidden">
+          <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-4">
             <div className="text-sm font-medium text-zinc-900">
               Preview (hex)
             </div>
-            <pre className="mt-2 max-w-full overflow-x-auto rounded-lg bg-white p-3 text-xs text-zinc-800 whitespace-pre-wrap break-all">
+            <pre className="mt-2 max-h-96 max-w-full overflow-auto rounded-lg bg-white p-3 text-xs text-zinc-800 whitespace-pre-wrap break-all">
               {toHexPreview(outputBytes)}
             </pre>
           </div>

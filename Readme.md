@@ -7,3 +7,4 @@ The backend implements a client-server architecture supporting both raw TCP and 
 Key features include binary-safe file I/O, cross-platform socket networking, thread-per-connection concurrency, and a RESTful HTTP API. The system is containerized with Docker and deployable to cloud platforms. A React-based frontend provides an intuitive web interface for file compression operations.
 
 **Ref: University of Lincoln - CMP9133-2526 Assessment**
+
