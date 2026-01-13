@@ -39,8 +39,11 @@ async function postBinary(
     });
   } catch (e) {
     // Browser fetch throws TypeError on network failures (CORS blocked, connection refused, etc).
-    const extra = `Failed to fetch.`;
-    throw new Error(extra);
+    const apiBase = getApiBase();
+    const errorMsg = e instanceof Error ? e.message : String(e);
+    throw new Error(
+      `Failed to fetch from ${apiBase}${path}. ${errorMsg}. Check: 1) API is running, 2) CORS is configured, 3) WAKU_PUBLIC_API_BASE env var is set correctly.`
+    );
   }
 
   if (!res.ok) {
